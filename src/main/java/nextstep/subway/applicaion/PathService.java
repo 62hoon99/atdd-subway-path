@@ -1,18 +1,19 @@
 package nextstep.subway.applicaion;
 
 import nextstep.subway.applicaion.dto.PathResponse;
+import nextstep.subway.domain.SectionRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PathService {
 
-    private final PathFinder pathFinder;
+    private final SectionRepository sectionRepository;
 
-    public PathService(PathFinder pathFinder) {
-        this.pathFinder = pathFinder;
+    public PathService(SectionRepository sectionRepository) {
+        this.sectionRepository = sectionRepository;
     }
 
     public PathResponse find(Long sourceId, Long targetId) {
-        return pathFinder.find(sourceId, targetId);
+        return PathFinder.find(sourceId, targetId, sectionRepository.findAll());
     }
 }

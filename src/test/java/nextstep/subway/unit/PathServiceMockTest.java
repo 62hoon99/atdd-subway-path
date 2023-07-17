@@ -1,9 +1,11 @@
 package nextstep.subway.unit;
 
-import nextstep.subway.applicaion.PathFinder;
 import nextstep.subway.applicaion.PathService;
 import nextstep.subway.applicaion.dto.PathResponse;
 import nextstep.subway.applicaion.dto.StationResponse;
+import nextstep.subway.domain.Line;
+import nextstep.subway.domain.Section;
+import nextstep.subway.domain.SectionRepository;
 import nextstep.subway.domain.Station;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class PathServiceMockTest {
 
     @Mock
-    private PathFinder pathFinder;
+    private SectionRepository sectionRepository;
 
     @Test
     void findPath() {
@@ -29,8 +31,14 @@ public class PathServiceMockTest {
         Long sourceId = 1L;
         String 도착역명 = "도착역";
         Long targetId = 2L;
-        when(pathFinder.find(sourceId, targetId)).thenReturn(new PathResponse(List.of(new Station(출발역명), new Station(도착역명)), 10));
-        PathService pathService = new PathService(pathFinder);
+        String 중간역명 = "중간역";
+        Long middleId = 3L;
+
+        Section 출발역_중간역 = new Section(new Line(), new Station(sourceId, 출발역명), new Station(middleId, 중간역명), 10);
+        Section 중간역_도착역 = new Section(new Line(), new Station(middleId, 중간역명), new Station(targetId, 도착역명), 10);
+        Section 출발역_도착역 = new Section(new Line(), new Station(sourceId, 출발역명), new Station(targetId, 도착역명), 19);
+        when(sectionRepository.findAll()).thenReturn(List.of(출발역_중간역, 중간역_도착역, 출발역_도착역));
+        PathService pathService = new PathService(sectionRepository);
 
         //when
         PathResponse response = pathService.find(sourceId, targetId);
@@ -38,6 +46,6 @@ public class PathServiceMockTest {
         //then
         List<String> stationNames = response.getStations().stream().map(StationResponse::getName).collect(Collectors.toList());
         assertThat(stationNames).startsWith(출발역명).endsWith(도착역명);
-        assertThat(response.getDistance()).isEqualTo(10);
+        assertThat(response.getDistance()).isEqualTo(19);
     }
 }

@@ -30,8 +30,8 @@ public class LineServiceMockTest {
         Long lineId = 1L;
         Long upStationId = 1L;
         Long downStationId = 2L;
-        when(stationService.findById(upStationId)).thenReturn(new Station());
-        when(stationService.findById(downStationId)).thenReturn(new Station());
+        when(stationService.findById(upStationId)).thenReturn(new Station(upStationId, "상행역"));
+        when(stationService.findById(downStationId)).thenReturn(new Station(downStationId, "하행역"));
         when(lineRepository.findById(lineId)).thenReturn(Optional.of(new Line()));
         LineService lineService = new LineService(lineRepository, stationService);
 
