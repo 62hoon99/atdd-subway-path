@@ -41,7 +41,7 @@ public class Station {
     }
 
     public boolean hasId(Long id) {
-        return this.id.equals(id);
+        return Objects.equals(this.id, id);
     }
 
     @Override
